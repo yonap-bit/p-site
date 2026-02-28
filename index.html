@@ -1,1 +1,178 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>City Police — Home</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <div class="badge" aria-hidden="true">CP</div>
+        <div>
+          <p class="brand-title">City Police</p>
+          <p class="brand-subtitle">Public Safety & Community Support</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="./index.html" aria-current="page">Home</a>
+        <a href="#stations">Stations</a>
+        <a href="#updates">Updates</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Emergency alert (toggle with JS) -->
+  <div id="globalAlert" class="alert hidden" role="alert" aria-live="assertive">
+    <div class="wrap alert-inner">
+      <div>
+        <strong id="alertTitle">Emergency:</strong>
+        <span id="alertMessage">Road closed on High St due to incident. Avoid the area.</span>
+      </div>
+      <button id="dismissAlertBtn" class="ghost-btn" type="button" aria-label="Dismiss alert">Dismiss</button>
+    </div>
+  </div>
+
+  <main id="main" class="wrap">
+    <!-- Flash message for redirects -->
+    <div id="flash" class="flash hidden" role="status" aria-live="polite"></div>
+
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-text">
+        <h1 id="heroTitle">Help when you need it.</h1>
+        <p class="muted">
+          Emergency? Call <strong>999</strong>. Non-emergency? Call <strong>101</strong>.
+          You can also find your nearest station and latest local updates below.
+        </p>
+
+        <div class="cta">
+          <a class="btn danger" href="tel:999" aria-label="Call 999 for emergencies">Call 999</a>
+          <a class="btn" href="tel:101" aria-label="Call 101 for non-emergencies">Call 101</a>
+          <a class="btn light" href="#stations">Find a station</a>
+        </div>
+
+        <div class="chips" aria-label="Quick actions">
+          <a class="chip" href="#report">Report online</a>
+          <a class="chip" href="#updates">Latest updates</a>
+          <a class="chip" href="#contact">Contact us</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-label="Important information">
+        <h2 class="panel-title">If you’re in immediate danger</h2>
+        <p class="panel-text">Call <strong>999</strong>. If you can’t speak, stay on the line and press <strong>55</strong> when prompted.</p>
+        <hr class="panel-rule" />
+        <p class="panel-text muted">
+          For non-urgent matters, use <strong>101</strong> or report online.
+        </p>
+      </aside>
+    </section>
+
+    <section id="report" class="section" aria-labelledby="reportTitle">
+      <h2 id="reportTitle">Report online</h2>
+      <p class="muted">Use this for non-emergencies. For emergencies, call 999.</p>
+
+      <form class="card form" id="reportForm" novalidate>
+        <div class="grid">
+          <label>
+            What happened?
+            <textarea name="details" required minlength="20" rows="5"
+              placeholder="Describe what happened (min 20 characters)"></textarea>
+            <small class="hint">Include location, time, and descriptions where possible.</small>
+          </label>
+
+          <div class="row">
+            <label>
+              Date of incident
+              <input type="date" name="date" required />
+            </label>
+
+            <label>
+              Your phone (optional)
+              <input type="tel" name="phone" autocomplete="tel" placeholder="+44 ..." />
+            </label>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" name="consent" required />
+            <span>I confirm this is not an emergency and information is accurate to the best of my knowledge.</span>
+          </label>
+
+          <button class="btn" type="submit">Submit report</button>
+          <p id="formStatus" class="muted" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section id="updates" class="section" aria-labelledby="updatesTitle">
+      <div class="section-head">
+        <h2 id="updatesTitle">Latest updates</h2>
+        <button class="ghost-btn" id="toggleAlertBtn" type="button">Toggle demo emergency alert</button>
+      </div>
+
+      <ul class="list">
+        <li class="list-item">
+          <a href="#" class="list-link">Road closure: High St</a>
+          <div class="muted small"><time datetime="2026-02-28">28 Feb 2026</time> · Traffic</div>
+        </li>
+        <li class="list-item">
+          <a href="#" class="list-link">Community meeting: Neighbourhood watch</a>
+          <div class="muted small"><time datetime="2026-03-03">03 Mar 2026</time> · Community</div>
+        </li>
+        <li class="list-item">
+          <a href="#" class="list-link">Safety advice: Avoid phishing messages</a>
+          <div class="muted small"><time datetime="2026-02-20">20 Feb 2026</time> · Advice</div>
+        </li>
+      </ul>
+    </section>
+
+    <section id="stations" class="section" aria-labelledby="stationsTitle">
+      <div class="section-head">
+        <h2 id="stationsTitle">Find a station</h2>
+        <div class="search">
+          <label class="sr-only" for="stationSearch">Search stations</label>
+          <input id="stationSearch" type="search" placeholder="Search by name, area, postcode…" autocomplete="off" />
+        </div>
+      </div>
+
+      <div id="stationsGrid" class="cards" aria-live="polite"></div>
+      <p id="stationsCount" class="muted small"></p>
+    </section>
+
+    <section id="contact" class="section" aria-labelledby="contactTitle">
+      <h2 id="contactTitle">Contact</h2>
+
+      <div class="cols">
+        <address class="card">
+          <strong>City Police HQ</strong><br />
+          12 Example Road, London, UK<br />
+          <a href="tel:+442012345678">+44 20 1234 5678</a><br />
+          <a href="mailto:frontdesk@example.police.uk">frontdesk@example.police.uk</a>
+        </address>
+
+        <div class="card">
+          <h3 class="card-title">Useful numbers</h3>
+          <ul class="bullets">
+            <li><strong>999</strong> — Emergency</li>
+            <li><strong>101</strong> — Non-emergency</li>
+            <li><strong>0800 555 111</strong> — Crimestoppers (anonymous)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="muted small">© <span id="year"></span> City Police. This is a demo template.</p>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
