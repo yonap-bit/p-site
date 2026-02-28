@@ -74,13 +74,11 @@
   };
 
   const formatPhoneHref = (phone) => {
-    // Keep + and digits only for tel:
     const cleaned = phone.replace(/[^\d+]/g, "");
     return `tel:${cleaned}`;
   };
 
   const osmEmbedUrl = (lat, lon) => {
-    // Simple bbox around point
     const delta = 0.01;
     const left = lon - delta;
     const right = lon + delta;
@@ -90,7 +88,8 @@
     return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
   };
 
-  const osmDirectionsUrl = (lat, lon) => `https://www.openstreetmap.org/directions?to=${lat}%2C${lon}`;
+  const osmDirectionsUrl = (lat, lon) =>
+    `https://www.openstreetmap.org/directions?to=${lat}%2C${lon}`;
 
   // --- homepage
   function renderStationsGrid(list) {
@@ -152,7 +151,6 @@
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      // Native-like validation (because we used novalidate to style ourselves)
       const details = form.elements["details"];
       const date = form.elements["date"];
       const consent = form.elements["consent"];
@@ -168,7 +166,6 @@
         return;
       }
 
-      // Demo submission (no backend)
       status.textContent = "Submitted (demo). In a real site, this would send to a secure endpoint.";
       status.style.color = "#bbf7d0";
       form.reset();
@@ -199,7 +196,6 @@
     const station = STATIONS.find((s) => s.id === id);
 
     if (!id || !station) {
-      // Redirect to homepage with message and anchor to stations
       const msg = encodeURIComponent("Station not found. Showing station list instead.");
       location.replace(`./index.html?msg=${msg}#stations`);
       return;
@@ -239,7 +235,7 @@
     map.src = osmEmbedUrl(station.lat, station.lon);
   }
 
-  // --- flash messages (redirect “stuff”)
+  // --- flash messages
   function initFlash() {
     const msg = getFlashFromUrl();
     if (msg) showFlash(msg);
