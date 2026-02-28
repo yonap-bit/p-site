@@ -1,60 +1,58 @@
 (() => {
+  // NVCPD Demo data (Nowhere Ville, USA)
   const STATIONS = [
     {
-      id: "central",
-      name: "Central Station",
-      area: "Westminster",
-      postcode: "SW1A 1AA",
-      addressLines: ["12 Example Road", "London"],
-      phone: "+442012345678",
-      email: "central@example.police.uk",
-      lat: 51.5079,
-      lon: -0.1281,
+      id: "hq",
+      name: "NVCPD Headquarters",
+      area: "Downtown Nowhere Ville",
+      postcode: "00001",
+      addressLines: ["100 Justice Avenue", "Nowhere Ville, USA"],
+      phone: "+15550101",
+      email: "hq@nvcpd.gov",
+      lat: 37.7749,
+      lon: -122.4194,
       hours: [
-        ["Mon–Fri", "08:00–20:00"],
-        ["Sat", "10:00–18:00"],
-        ["Sun", "10:00–16:00"],
-      ],
-    },
-    {
-      id: "northside",
-      name: "Northside Station",
-      area: "Camden",
-      postcode: "NW1 4NP",
-      addressLines: ["55 Borough Street", "London"],
-      phone: "+442076543210",
-      email: "northside@example.police.uk",
-      lat: 51.5413,
-      lon: -0.1420,
-      hours: [
-        ["Mon–Fri", "09:00–19:00"],
-        ["Sat", "10:00–16:00"],
+        ["Mon–Fri", "08:00 AM – 06:00 PM"],
+        ["Sat", "10:00 AM – 04:00 PM"],
         ["Sun", "Closed"],
       ],
     },
     {
-      id: "riverside",
-      name: "Riverside Station",
-      area: "Southwark",
-      postcode: "SE1 9GF",
-      addressLines: ["8 River Walk", "London"],
-      phone: "+442079998888",
-      email: "riverside@example.police.uk",
-      lat: 51.5048,
-      lon: -0.0890,
+      id: "north",
+      name: "North Precinct",
+      area: "North Nowhere Ville",
+      postcode: "00012",
+      addressLines: ["2400 North Parkway", "Nowhere Ville, USA"],
+      phone: "+15550121",
+      email: "north@nvcpd.gov",
+      lat: 37.8044,
+      lon: -122.2712,
       hours: [
-        ["Mon–Fri", "08:00–18:00"],
-        ["Sat–Sun", "10:00–14:00"],
+        ["Mon–Fri", "09:00 AM – 07:00 PM"],
+        ["Sat", "10:00 AM – 02:00 PM"],
+        ["Sun", "Closed"],
+      ],
+    },
+    {
+      id: "south",
+      name: "South Precinct",
+      area: "South Nowhere Ville",
+      postcode: "00024",
+      addressLines: ["8800 South Service Rd", "Nowhere Ville, USA"],
+      phone: "+15550134",
+      email: "south@nvcpd.gov",
+      lat: 37.6879,
+      lon: -122.4702,
+      hours: [
+        ["Mon–Fri", "08:30 AM – 05:30 PM"],
+        ["Sat–Sun", "Closed"],
       ],
     },
   ];
 
-  // --- utilities
+  // Utilities
   const $ = (sel) => document.querySelector(sel);
-  const setYear = () => {
-    const y = $("#year");
-    if (y) y.textContent = new Date().getFullYear();
-  };
+  const qs = new URLSearchParams(location.search);
 
   const escapeHtml = (s) =>
     String(s)
@@ -64,26 +62,19 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
-  const qs = new URLSearchParams(location.search);
-  const getFlashFromUrl = () => qs.get("msg");
-  const showFlash = (message) => {
-    const el = $("#flash");
-    if (!el || !message) return;
-    el.textContent = message;
-    el.classList.remove("hidden");
+  const setYear = () => {
+    const y = $("#year");
+    if (y) y.textContent = new Date().getFullYear();
   };
 
-  const formatPhoneHref = (phone) => {
-    const cleaned = phone.replace(/[^\d+]/g, "");
-    return `tel:${cleaned}`;
-  };
+  const telHref = (phone) => `tel:${String(phone).replace(/[^\d+]/g, "")}`;
 
   const osmEmbedUrl = (lat, lon) => {
-    const delta = 0.01;
-    const left = lon - delta;
-    const right = lon + delta;
-    const bottom = lat - delta;
-    const top = lat + delta;
+    const d = 0.01;
+    const left = lon - d;
+    const right = lon + d;
+    const bottom = lat - d;
+    const top = lat + d;
     const bbox = `${left}%2C${bottom}%2C${right}%2C${top}`;
     return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
   };
@@ -91,30 +82,78 @@
   const osmDirectionsUrl = (lat, lon) =>
     `https://www.openstreetmap.org/directions?to=${lat}%2C${lon}`;
 
-  // --- homepage
-  function renderStationsGrid(list) {
+  // Mobile menu
+  function setupMobileMenu() {
+    const btn = $("#menuBtn");
+    const nav = $("#mobileNav");
+    if (!btn || !nav) return;
+
+    btn.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      nav.hidden = isOpen;
+    });
+
+    // close after click
+    nav.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a) return;
+      btn.setAttribute("aria-expanded", "false");
+      nav.hidden = true;
+    });
+  }
+
+  // Site alert
+  function setupSiteAlert() {
+    const alertEl = $("#siteAlert");
+    const dismiss = $("#dismissAlert");
+    const toggle = $("#toggleDemoAlert");
+
+    dismiss?.addEventListener("click", () => {
+      alertEl?.setAttribute("hidden", "");
+    });
+
+    toggle?.addEventListener("click", () => {
+      if (!alertEl) return;
+      if (alertEl.hasAttribute("hidden")) alertEl.removeAttribute("hidden");
+      else alertEl.setAttribute("hidden", "");
+    });
+  }
+
+  // Flash message (from redirects)
+  function setupFlash() {
+    const msg = qs.get("msg");
+    const flash = $("#flash");
+    const stationFlash = $("#stationFlash");
+    const target = flash || stationFlash;
+    if (!msg || !target) return;
+
+    target.textContent = msg;
+    target.hidden = false;
+  }
+
+  // Homepage stations list
+  function renderStations(list) {
     const grid = $("#stationsGrid");
     const count = $("#stationsCount");
     if (!grid) return;
 
     grid.innerHTML = list
       .map((s) => {
-        const addr = `${s.addressLines.join(", ")}, ${s.postcode}`;
+        const addr = `${s.addressLines.join(", ")} ${s.postcode}`;
         return `
           <article class="card station-card">
-            <h3>
-              <a href="./station.html?id=${encodeURIComponent(s.id)}">
-                ${escapeHtml(s.name)}
-              </a>
+            <h3 class="title">
+              <a href="./station.html?id=${encodeURIComponent(s.id)}">${escapeHtml(s.name)}</a>
             </h3>
-            <p class="muted">${escapeHtml(addr)}</p>
-            <div class="meta">
-              <span>Area: ${escapeHtml(s.area)}</span>
-              <span>Postcode: ${escapeHtml(s.postcode)}</span>
+            <p class="addr">${escapeHtml(addr)}</p>
+            <div class="row">
+              <div class="meta-line">${escapeHtml(s.area)}</div>
+              <div class="meta-line">ZIP ${escapeHtml(s.postcode)}</div>
             </div>
-            <div class="cta" style="margin-top:12px">
-              <a class="btn light" href="./station.html?id=${encodeURIComponent(s.id)}">View details</a>
-              <a class="btn" href="${formatPhoneHref(s.phone)}" aria-label="Call ${escapeHtml(s.name)}">${escapeHtml(s.phone)}</a>
+            <div class="actions">
+              <a class="btn btn-primary btn-sm" href="./station.html?id=${encodeURIComponent(s.id)}">View Details</a>
+              <a class="btn btn-ghost btn-sm" href="${telHref(s.phone)}" aria-label="Call ${escapeHtml(s.name)}">Call</a>
             </div>
           </article>
         `;
@@ -126,23 +165,26 @@
 
   function setupStationSearch() {
     const input = $("#stationSearch");
-    if (!input) return;
+    const grid = $("#stationsGrid");
+    if (!input || !grid) return;
 
     const all = [...STATIONS];
-    renderStationsGrid(all);
+    renderStations(all);
 
     input.addEventListener("input", () => {
       const q = input.value.trim().toLowerCase();
-      if (!q) return renderStationsGrid(all);
+      if (!q) return renderStations(all);
 
       const filtered = all.filter((s) => {
         const hay = `${s.name} ${s.area} ${s.postcode} ${s.addressLines.join(" ")}`.toLowerCase();
         return hay.includes(q);
       });
-      renderStationsGrid(filtered);
+
+      renderStations(filtered);
     });
   }
 
+  // Form (demo submit)
   function setupReportForm() {
     const form = $("#reportForm");
     const status = $("#formStatus");
@@ -155,39 +197,24 @@
       const date = form.elements["date"];
       const consent = form.elements["consent"];
 
-      const problems = [];
-      if (!details.value || details.value.trim().length < 20) problems.push("Please describe what happened (min 20 characters).");
-      if (!date.value) problems.push("Please select a date of incident.");
-      if (!consent.checked) problems.push("Please confirm this is not an emergency.");
+      const errors = [];
+      if (!details?.value || details.value.trim().length < 20) errors.push("Please describe the incident (minimum 20 characters).");
+      if (!date?.value) errors.push("Please select the incident date.");
+      if (!consent?.checked) errors.push("Please confirm this is not an emergency.");
 
-      if (problems.length) {
-        status.textContent = problems[0];
-        status.style.color = "#fecaca";
+      if (errors.length) {
+        status.textContent = errors[0];
+        status.style.color = "#b42318";
         return;
       }
 
-      status.textContent = "Submitted (demo). In a real site, this would send to a secure endpoint.";
-      status.style.color = "#bbf7d0";
+      status.textContent = "Submitted (demo). In production, this would securely send to NVCPD.";
+      status.style.color = "#0b2f6b";
       form.reset();
     });
   }
 
-  function setupAlertDemo() {
-    const toggleBtn = $("#toggleAlertBtn");
-    const alertEl = $("#globalAlert");
-    const dismissBtn = $("#dismissAlertBtn");
-    if (!alertEl) return;
-
-    toggleBtn?.addEventListener("click", () => {
-      alertEl.classList.toggle("hidden");
-    });
-
-    dismissBtn?.addEventListener("click", () => {
-      alertEl.classList.add("hidden");
-    });
-  }
-
-  // --- station page
+  // Station page renderer + redirect
   function renderStationPage() {
     const nameEl = $("#stationName");
     if (!nameEl) return; // not on station page
@@ -196,58 +223,59 @@
     const station = STATIONS.find((s) => s.id === id);
 
     if (!id || !station) {
-      const msg = encodeURIComponent("Station not found. Showing station list instead.");
+      const msg = encodeURIComponent("Station not found. Showing station list.");
       location.replace(`./index.html?msg=${msg}#stations`);
       return;
     }
 
-    document.title = `City Police — ${station.name}`;
+    document.title = `NVCPD | ${station.name}`;
 
     $("#stationName").textContent = station.name;
-    $("#stationMeta").textContent = `${station.area} · ${station.postcode}`;
+    $("#stationMeta").textContent = `${station.area} · Nowhere Ville, USA ${station.postcode}`;
 
     $("#stationAddress").innerHTML = `
-      <strong>${escapeHtml(station.name)}</strong><br/>
-      ${escapeHtml(station.addressLines.join(", "))}<br/>
-      ${escapeHtml(station.postcode)}
+      <strong>${escapeHtml(station.name)}</strong><br />
+      ${escapeHtml(station.addressLines[0])}<br />
+      ${escapeHtml(station.addressLines[1])}<br />
+      <strong>ZIP:</strong> ${escapeHtml(station.postcode)}
     `;
 
-    const phoneEl = $("#stationPhone");
-    phoneEl.textContent = station.phone;
-    phoneEl.href = formatPhoneHref(station.phone);
+    const phone = $("#stationPhone");
+    if (phone) {
+      phone.textContent = station.phone;
+      phone.href = telHref(station.phone);
+    }
 
-    const emailEl = $("#stationEmail");
-    emailEl.textContent = station.email;
-    emailEl.href = `mailto:${station.email}`;
+    const email = $("#stationEmail");
+    if (email) {
+      email.textContent = station.email;
+      email.href = `mailto:${station.email}`;
+    }
 
     const callBtn = $("#callBtn");
-    if (callBtn) callBtn.href = formatPhoneHref(station.phone);
+    if (callBtn) callBtn.href = telHref(station.phone);
 
-    const directionsBtn = $("#directionsBtn");
-    if (directionsBtn) directionsBtn.href = osmDirectionsUrl(station.lat, station.lon);
+    const dirBtn = $("#directionsBtn");
+    if (dirBtn) dirBtn.href = osmDirectionsUrl(station.lat, station.lon);
 
-    const hoursList = $("#hoursList");
-    hoursList.innerHTML = station.hours
-      .map(([day, hrs]) => `<li><strong>${escapeHtml(day)}:</strong> ${escapeHtml(hrs)}</li>`)
-      .join("");
+    const hours = $("#hoursList");
+    if (hours) {
+      hours.innerHTML = station.hours
+        .map(([d, h]) => `<li><strong>${escapeHtml(d)}:</strong> ${escapeHtml(h)}</li>`)
+        .join("");
+    }
 
     const map = $("#mapFrame");
-    map.src = osmEmbedUrl(station.lat, station.lon);
+    if (map) map.src = osmEmbedUrl(station.lat, station.lon);
   }
 
-  // --- flash messages
-  function initFlash() {
-    const msg = getFlashFromUrl();
-    if (msg) showFlash(msg);
-  }
-
-  // --- boot
   function init() {
     setYear();
-    initFlash();
-    setupAlertDemo();
-    setupReportForm();
+    setupMobileMenu();
+    setupSiteAlert();
+    setupFlash();
     setupStationSearch();
+    setupReportForm();
     renderStationPage();
   }
 
