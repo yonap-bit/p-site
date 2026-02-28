@@ -3,82 +3,144 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>City Police — Station</title>
+  <title>NVCPD | Station</title>
+  <meta name="description" content="NVCPD station details — address, hours, contact info, and directions." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <header class="site-header">
-    <div class="wrap header-inner">
-      <div class="brand">
-        <div class="badge" aria-hidden="true">CP</div>
-        <div>
-          <p class="brand-title">City Police</p>
-          <p class="brand-subtitle">Station details</p>
-        </div>
+  <div class="topbar" role="region" aria-label="Emergency numbers">
+    <div class="container topbar-inner">
+      <div class="topbar-left">
+        <span class="badge-pill badge-danger" aria-label="Emergency">EMERGENCY</span>
+        <a class="topbar-link" href="tel:911">Call 911</a>
+        <span class="divider" aria-hidden="true"></span>
+        <span class="badge-pill badge-neutral" aria-label="Non-emergency">NON-EMERGENCY</span>
+        <a class="topbar-link" href="tel:+15550101">Call (555) 0101</a>
       </div>
+      <div class="topbar-right">
+        <a class="topbar-link" href="./index.html#stations">Stations</a>
+        <a class="topbar-link" href="./index.html#report">Report Online</a>
+        <a class="topbar-link" href="./index.html#contact">Contact</a>
+      </div>
+    </div>
+  </div>
 
-      <nav class="nav" aria-label="Primary">
+  <header class="header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html" aria-label="NVCPD home">
+        <span class="seal" aria-hidden="true">
+          <svg width="42" height="42" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
+            <defs>
+              <linearGradient id="sealG2" x1="0" x2="1">
+                <stop offset="0" stop-color="#0b2f6b"/>
+                <stop offset="1" stop-color="#0f4aa6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="30" fill="url(#sealG2)"/>
+            <circle cx="32" cy="32" r="24" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+            <path d="M32 14l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"
+              fill="#ffffff" opacity="0.92"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">NVCPD</span>
+          <span class="brand-sub">Nowhere Ville County Police Department · Nowhere Ville, USA</span>
+        </span>
+      </a>
+
+      <nav class="nav" aria-label="Primary navigation">
         <a href="./index.html">Home</a>
-        <a href="./index.html#stations">Stations</a>
+        <a href="./index.html#updates">News & Alerts</a>
+        <a href="./index.html#stations" aria-current="page">Stations</a>
+        <a href="./index.html#report">Report</a>
         <a href="./index.html#contact">Contact</a>
       </nav>
+
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+        <span aria-hidden="true">Menu</span>
+      </button>
+    </div>
+
+    <div class="mobile-nav container" id="mobileNav" hidden>
+      <a href="./index.html">Home</a>
+      <a href="./index.html#updates">News & Alerts</a>
+      <a href="./index.html#stations" aria-current="page">Stations</a>
+      <a href="./index.html#report">Report</a>
+      <a href="./index.html#contact">Contact</a>
     </div>
   </header>
 
-  <main id="main" class="wrap">
-    <div id="flash" class="flash hidden" role="status" aria-live="polite"></div>
+  <main id="main">
+    <section class="pagehead">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="./index.html#stations">← Back to Stations</a>
+        </nav>
 
-    <div class="breadcrumb">
-      <a href="./index.html#stations">← Back to stations</a>
-    </div>
+        <div id="stationFlash" class="flash" role="status" aria-live="polite" hidden></div>
 
-    <section class="station" aria-labelledby="stationName">
-      <div class="station-head">
-        <div>
-          <h1 id="stationName">Station</h1>
-          <p id="stationMeta" class="muted"></p>
+        <h1 class="page-title" id="stationName">Station</h1>
+        <p class="meta" id="stationMeta"></p>
+
+        <div class="page-actions">
+          <a id="callBtn" class="btn btn-primary" href="tel:+15550101">Call</a>
+          <a id="directionsBtn" class="btn btn-outline" href="#" target="_blank" rel="noopener">Directions</a>
         </div>
-
-        <div class="cta">
-          <a id="callBtn" class="btn" href="tel:101">Call 101</a>
-          <a id="directionsBtn" class="btn light" href="#" target="_blank" rel="noopener">Directions</a>
-        </div>
-      </div>
-
-      <div class="cols">
-        <div class="card">
-          <h2 class="card-title">Contact</h2>
-          <p id="stationAddress"></p>
-          <p>
-            Phone: <a id="stationPhone" href="#"></a><br />
-            Email: <a id="stationEmail" href="#"></a>
-          </p>
-        </div>
-
-        <div class="card">
-          <h2 class="card-title">Opening hours</h2>
-          <ul id="hoursList" class="bullets"></ul>
-          <p class="muted small">Tip: For emergencies call 999.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2 class="card-title">Map</h2>
-        <iframe
-          id="mapFrame"
-          title="Map"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          style="width:100%; height:340px; border:0; border-radius:12px;"
-        ></iframe>
-        <p class="muted small">If the map doesn’t load, use the “Directions” button above.</p>
       </div>
     </section>
 
-    <footer class="footer">
-      <p class="muted small">© <span id="year"></span> City Police. This is a demo template.</p>
+    <section class="section">
+      <div class="container">
+        <div class="grid-2">
+          <div class="card">
+            <h2 class="card-title">Contact</h2>
+            <p class="card-text" id="stationAddress"></p>
+            <p class="card-text">
+              <strong>Phone:</strong> <a id="stationPhone" href="#"></a><br />
+              <strong>Email:</strong> <a id="stationEmail" href="#"></a>
+            </p>
+            <p class="meta">For emergencies, call 911.</p>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Hours</h2>
+            <ul class="list" id="hoursList"></ul>
+            <p class="meta">Hours may change during holidays and emergencies.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2 class="card-title">Map</h2>
+          <iframe
+            id="mapFrame"
+            title="Station map"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            style="width:100%; height:360px; border:0; border-radius:12px;"
+          ></iframe>
+          <p class="meta" style="margin-top:10px">If the map doesn’t load, use “Directions”.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">
+            <span class="mini-seal" aria-hidden="true">NV</span>
+            <div>
+              <div class="footer-name">NVCPD</div>
+              <div class="footer-sub meta">Nowhere Ville County Police Department · Nowhere Ville, USA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-right meta">
+          © <span id="year"></span> NVCPD. Demo template.
+        </div>
+      </div>
     </footer>
   </main>
 
