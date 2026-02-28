@@ -3,172 +3,316 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>City Police — Home</title>
+  <title>NVCPD | Nowhere Ville County Police Department</title>
+  <meta name="description" content="NVCPD — Nowhere Ville County Police Department. Emergency info, stations, updates, and online reporting." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <header class="site-header">
-    <div class="wrap header-inner">
-      <div class="brand">
-        <div class="badge" aria-hidden="true">CP</div>
-        <div>
-          <p class="brand-title">City Police</p>
-          <p class="brand-subtitle">Public Safety & Community Support</p>
-        </div>
+  <!-- Utility bar -->
+  <div class="topbar" role="region" aria-label="Emergency numbers">
+    <div class="container topbar-inner">
+      <div class="topbar-left">
+        <span class="badge-pill badge-danger" aria-label="Emergency">EMERGENCY</span>
+        <a class="topbar-link" href="tel:911">Call 911</a>
+        <span class="divider" aria-hidden="true"></span>
+        <span class="badge-pill badge-neutral" aria-label="Non-emergency">NON-EMERGENCY</span>
+        <a class="topbar-link" href="tel:+15550101">Call (555) 0101</a>
       </div>
-
-      <nav class="nav" aria-label="Primary">
-        <a href="./index.html" aria-current="page">Home</a>
-        <a href="#stations">Stations</a>
-        <a href="#updates">Updates</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Emergency alert (toggle with JS) -->
-  <div id="globalAlert" class="alert hidden" role="alert" aria-live="assertive">
-    <div class="wrap alert-inner">
-      <div>
-        <strong id="alertTitle">Emergency:</strong>
-        <span id="alertMessage">Road closed on High St due to incident. Avoid the area.</span>
+      <div class="topbar-right">
+        <a class="topbar-link" href="#report">Report Online</a>
+        <a class="topbar-link" href="#stations">Stations</a>
+        <a class="topbar-link" href="#contact">Contact</a>
       </div>
-      <button id="dismissAlertBtn" class="ghost-btn" type="button" aria-label="Dismiss alert">Dismiss</button>
     </div>
   </div>
 
-  <main id="main" class="wrap">
-    <!-- Flash message for redirects -->
-    <div id="flash" class="flash hidden" role="status" aria-live="polite"></div>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html" aria-label="NVCPD home">
+        <span class="seal" aria-hidden="true">
+          <!-- Simple “agency seal” placeholder -->
+          <svg width="42" height="42" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
+            <defs>
+              <linearGradient id="sealG" x1="0" x2="1">
+                <stop offset="0" stop-color="#0b2f6b"/>
+                <stop offset="1" stop-color="#0f4aa6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="30" fill="url(#sealG)"/>
+            <circle cx="32" cy="32" r="24" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+            <path d="M32 14l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"
+              fill="#ffffff" opacity="0.92"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">NVCPD</span>
+          <span class="brand-sub">Nowhere Ville County Police Department · Nowhere Ville, USA</span>
+        </span>
+      </a>
 
-    <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero-text">
-        <h1 id="heroTitle">Help when you need it.</h1>
-        <p class="muted">
-          Emergency? Call <strong>999</strong>. Non-emergency? Call <strong>101</strong>.
-          You can also find your nearest station and latest local updates below.
-        </p>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="./index.html" aria-current="page">Home</a>
+        <a href="#updates">News & Alerts</a>
+        <a href="#stations">Stations</a>
+        <a href="#report">Report</a>
+        <a href="#contact">Contact</a>
+      </nav>
 
-        <div class="cta">
-          <a class="btn danger" href="tel:999" aria-label="Call 999 for emergencies">Call 999</a>
-          <a class="btn" href="tel:101" aria-label="Call 101 for non-emergencies">Call 101</a>
-          <a class="btn light" href="#stations">Find a station</a>
-        </div>
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+        <span aria-hidden="true">Menu</span>
+      </button>
+    </div>
 
-        <div class="chips" aria-label="Quick actions">
-          <a class="chip" href="#report">Report online</a>
-          <a class="chip" href="#updates">Latest updates</a>
-          <a class="chip" href="#contact">Contact us</a>
-        </div>
+    <div class="mobile-nav container" id="mobileNav" hidden>
+      <a href="./index.html" aria-current="page">Home</a>
+      <a href="#updates">News & Alerts</a>
+      <a href="#stations">Stations</a>
+      <a href="#report">Report</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- Page alert (dismissible) -->
+  <section class="site-alert" id="siteAlert" role="alert" aria-live="assertive">
+    <div class="container site-alert-inner">
+      <div class="site-alert-msg">
+        <strong>Traffic Advisory:</strong>
+        <span>Lane closure on County Route 7 near Bridge Street until 6 PM.</span>
       </div>
+      <button class="btn btn-ghost btn-sm" id="dismissAlert" type="button" aria-label="Dismiss alert">Dismiss</button>
+    </div>
+  </section>
 
-      <aside class="hero-panel" aria-label="Important information">
-        <h2 class="panel-title">If you’re in immediate danger</h2>
-        <p class="panel-text">Call <strong>999</strong>. If you can’t speak, stay on the line and press <strong>55</strong> when prompted.</p>
-        <hr class="panel-rule" />
-        <p class="panel-text muted">
-          For non-urgent matters, use <strong>101</strong> or report online.
-        </p>
-      </aside>
-    </section>
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">Nowhere Ville, USA</p>
+          <h1 id="heroTitle">Public safety, transparency, and community partnership.</h1>
+          <p class="lead">
+            NVCPD provides emergency response, investigations, and community programs across Nowhere Ville County.
+            For immediate danger call <strong>911</strong>.
+          </p>
 
-    <section id="report" class="section" aria-labelledby="reportTitle">
-      <h2 id="reportTitle">Report online</h2>
-      <p class="muted">Use this for non-emergencies. For emergencies, call 999.</p>
-
-      <form class="card form" id="reportForm" novalidate>
-        <div class="grid">
-          <label>
-            What happened?
-            <textarea name="details" required minlength="20" rows="5"
-              placeholder="Describe what happened (min 20 characters)"></textarea>
-            <small class="hint">Include location, time, and descriptions where possible.</small>
-          </label>
-
-          <div class="row">
-            <label>
-              Date of incident
-              <input type="date" name="date" required />
-            </label>
-
-            <label>
-              Your phone (optional)
-              <input type="tel" name="phone" autocomplete="tel" placeholder="+44 ..." />
-            </label>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="btn btn-danger" href="tel:911" aria-label="Call 911">Call 911</a>
+            <a class="btn btn-primary" href="#report">Report Online</a>
+            <a class="btn btn-outline" href="#stations">Find a Station</a>
           </div>
 
-          <label class="check">
-            <input type="checkbox" name="consent" required />
-            <span>I confirm this is not an emergency and information is accurate to the best of my knowledge.</span>
-          </label>
-
-          <button class="btn" type="submit">Submit report</button>
-          <p id="formStatus" class="muted" role="status" aria-live="polite"></p>
+          <div class="quick-cards" aria-label="Quick links">
+            <a class="quick-card" href="#updates">
+              <span class="qc-title">News & Alerts</span>
+              <span class="qc-sub">Updates, closures, advisories</span>
+            </a>
+            <a class="quick-card" href="#report">
+              <span class="qc-title">Online Reporting</span>
+              <span class="qc-sub">Non-emergency submissions</span>
+            </a>
+            <a class="quick-card" href="#contact">
+              <span class="qc-title">Contact NVCPD</span>
+              <span class="qc-sub">HQ, numbers, email</span>
+            </a>
+          </div>
         </div>
-      </form>
-    </section>
 
-    <section id="updates" class="section" aria-labelledby="updatesTitle">
-      <div class="section-head">
-        <h2 id="updatesTitle">Latest updates</h2>
-        <button class="ghost-btn" id="toggleAlertBtn" type="button">Toggle demo emergency alert</button>
-      </div>
+        <aside class="hero-panel" aria-label="Important notice">
+          <div class="panel-block">
+            <h2 class="panel-title">If you can’t speak</h2>
+            <p class="panel-text">When calling 911, stay on the line. Dispatch can still help based on audio and location data.</p>
+          </div>
 
-      <ul class="list">
-        <li class="list-item">
-          <a href="#" class="list-link">Road closure: High St</a>
-          <div class="muted small"><time datetime="2026-02-28">28 Feb 2026</time> · Traffic</div>
-        </li>
-        <li class="list-item">
-          <a href="#" class="list-link">Community meeting: Neighbourhood watch</a>
-          <div class="muted small"><time datetime="2026-03-03">03 Mar 2026</time> · Community</div>
-        </li>
-        <li class="list-item">
-          <a href="#" class="list-link">Safety advice: Avoid phishing messages</a>
-          <div class="muted small"><time datetime="2026-02-20">20 Feb 2026</time> · Advice</div>
-        </li>
-      </ul>
-    </section>
+          <div class="panel-divider" aria-hidden="true"></div>
 
-    <section id="stations" class="section" aria-labelledby="stationsTitle">
-      <div class="section-head">
-        <h2 id="stationsTitle">Find a station</h2>
-        <div class="search">
-          <label class="sr-only" for="stationSearch">Search stations</label>
-          <input id="stationSearch" type="search" placeholder="Search by name, area, postcode…" autocomplete="off" />
-        </div>
-      </div>
+          <div class="panel-block">
+            <h2 class="panel-title">Non-Emergency</h2>
+            <p class="panel-text">
+              Call <a href="tel:+15550101">(555) 0101</a> or use Online Reporting for non-urgent incidents.
+            </p>
+          </div>
 
-      <div id="stationsGrid" class="cards" aria-live="polite"></div>
-      <p id="stationsCount" class="muted small"></p>
-    </section>
+          <div class="panel-divider" aria-hidden="true"></div>
 
-    <section id="contact" class="section" aria-labelledby="contactTitle">
-      <h2 id="contactTitle">Contact</h2>
-
-      <div class="cols">
-        <address class="card">
-          <strong>City Police HQ</strong><br />
-          12 Example Road, London, UK<br />
-          <a href="tel:+442012345678">+44 20 1234 5678</a><br />
-          <a href="mailto:frontdesk@example.police.uk">frontdesk@example.police.uk</a>
-        </address>
-
-        <div class="card">
-          <h3 class="card-title">Useful numbers</h3>
-          <ul class="bullets">
-            <li><strong>999</strong> — Emergency</li>
-            <li><strong>101</strong> — Non-emergency</li>
-            <li><strong>0800 555 111</strong> — Crimestoppers (anonymous)</li>
-          </ul>
-        </div>
+          <div class="panel-block">
+            <h2 class="panel-title">Tip Line</h2>
+            <p class="panel-text">Anonymous tips help. Use <a href="#contact">contact</a> options below.</p>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <footer class="footer">
-      <p class="muted small">© <span id="year"></span> City Police. This is a demo template.</p>
+    <!-- Updates -->
+    <section class="section" id="updates" aria-labelledby="updatesTitle">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="updatesTitle">News & Alerts</h2>
+          <div class="section-actions">
+            <button class="btn btn-ghost btn-sm" id="toggleDemoAlert" type="button">Toggle demo site alert</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="card-head">
+              <span class="tag tag-alert">Advisory</span>
+              <time class="meta" datetime="2026-02-28">Feb 28, 2026</time>
+            </div>
+            <h3 class="card-title">County Route 7 traffic pattern change</h3>
+            <p class="card-text">Temporary lane closure near Bridge Street. Expect delays and follow posted signage.</p>
+            <a class="card-link" href="#" aria-label="Read more about County Route 7 traffic pattern change">Read more</a>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <span class="tag tag-news">Community</span>
+              <time class="meta" datetime="2026-03-03">Mar 3, 2026</time>
+            </div>
+            <h3 class="card-title">Neighborhood safety meeting — Nowhere Ville Library</h3>
+            <p class="card-text">Join NVCPD officers for Q&A and prevention tips. RSVP encouraged.</p>
+            <a class="card-link" href="#" aria-label="Read more about neighborhood safety meeting">Read more</a>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <span class="tag tag-news">Prevention</span>
+              <time class="meta" datetime="2026-02-20">Feb 20, 2026</time>
+            </div>
+            <h3 class="card-title">Fraud & phishing awareness guidance</h3>
+            <p class="card-text">Don’t click suspicious links. Verify callers. Report scams using Online Reporting.</p>
+            <a class="card-link" href="#report" aria-label="Go to online reporting">Report a scam</a>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <span class="tag tag-alert">Notice</span>
+              <time class="meta" datetime="2026-02-15">Feb 15, 2026</time>
+            </div>
+            <h3 class="card-title">Records unit hours updated</h3>
+            <p class="card-text">Records requests are handled at HQ Monday–Friday. See station details for hours.</p>
+            <a class="card-link" href="#stations" aria-label="Find a station">Find a station</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stations -->
+    <section class="section" id="stations" aria-labelledby="stationsTitle">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="stationsTitle">Stations</h2>
+          <div class="search">
+            <label class="sr-only" for="stationSearch">Search stations</label>
+            <input id="stationSearch" type="search" placeholder="Search stations (name, area, postcode)..." autocomplete="off" />
+          </div>
+        </div>
+
+        <div id="flash" class="flash" role="status" aria-live="polite" hidden></div>
+
+        <div id="stationsGrid" class="stations-grid" aria-live="polite"></div>
+        <p id="stationsCount" class="meta" style="margin-top:10px"></p>
+      </div>
+    </section>
+
+    <!-- Report -->
+    <section class="section" id="report" aria-labelledby="reportTitle">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="reportTitle">Online Reporting</h2>
+          <p class="meta">For non-emergency incidents only. If you’re in danger, call 911.</p>
+        </div>
+
+        <form class="form card" id="reportForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="details">What happened?</label>
+              <textarea id="details" name="details" required minlength="20" rows="6" placeholder="Describe the incident (min 20 characters)"></textarea>
+              <div class="hint">Include location, time, and any identifying details.</div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="date">Date of incident</label>
+                <input id="date" type="date" name="date" required />
+              </div>
+              <div class="field">
+                <label for="phone">Your phone (optional)</label>
+                <input id="phone" type="tel" name="phone" autocomplete="tel" placeholder="(555) 0123" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" name="consent" required />
+                <span>I confirm this is not an emergency and the information is accurate to the best of my knowledge.</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Submit Report</button>
+              <p id="formStatus" class="meta" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact" aria-labelledby="contactTitle">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="contactTitle">Contact NVCPD</h2>
+          <p class="meta">Nowhere Ville, USA</p>
+        </div>
+
+        <div class="grid-2">
+          <address class="card">
+            <h3 class="card-title">Headquarters</h3>
+            <p class="card-text">
+              <strong>NVCPD Headquarters</strong><br />
+              100 Justice Avenue<br />
+              Nowhere Ville, USA 00001
+            </p>
+            <p class="card-text">
+              <strong>Non-Emergency:</strong> <a href="tel:+15550101">(555) 0101</a><br />
+              <strong>Email:</strong> <a href="mailto:info@nvcpd.gov">info@nvcpd.gov</a>
+            </p>
+            <p class="meta">For emergencies, call 911.</p>
+          </address>
+
+          <div class="card">
+            <h3 class="card-title">Helpful Numbers</h3>
+            <ul class="list">
+              <li><strong>911</strong> — Emergency</li>
+              <li><strong>(555) 0101</strong> — Non-Emergency Dispatch</li>
+              <li><strong>(555) 0199</strong> — Tip Line (voicemail)</li>
+              <li><strong>(555) 0110</strong> — Records Unit</li>
+            </ul>
+            <p class="meta">If you suspect a scam, report it using Online Reporting.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <div class="footer-brand">
+            <span class="mini-seal" aria-hidden="true">NV</span>
+            <div>
+              <div class="footer-name">NVCPD</div>
+              <div class="footer-sub meta">Nowhere Ville County Police Department · Nowhere Ville, USA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-right meta">
+          © <span id="year"></span> NVCPD. Demo template.
+        </div>
+      </div>
     </footer>
   </main>
 
